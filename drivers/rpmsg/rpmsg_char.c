@@ -29,6 +29,8 @@
 #include <linux/slab.h>
 #include <linux/uaccess.h>
 #include <uapi/linux/rpmsg.h>
+#include <linux/imx_rpmsg.h>
+#include <linux/timer.h>
 
 #include "rpmsg_internal.h"
 
@@ -46,6 +48,9 @@ static DEFINE_IDA(rpmsg_minor_ida);
 
 #define dev_to_ctrldev(dev) container_of(dev, struct rpmsg_ctrldev, dev)
 #define cdev_to_ctrldev(i_cdev) container_of(i_cdev, struct rpmsg_ctrldev, cdev)
+
+#define HB_INTERVAL_MS		1000
+static struct timer_list timer_hb;
 
 /**
  * struct rpmsg_ctrldev - control device for instantiating endpoint devices
@@ -85,6 +90,13 @@ struct rpmsg_eptdev {
 	struct sk_buff_head queue;
 	wait_queue_head_t readq;
 };
+
+void timer_hb_cb(unsigned long data)
+{
+	/* Signal remote core */
+	imx_mu_trigger_gpi(0);
+	mod_timer(&timer_hb, jiffies + msecs_to_jiffies(HB_INTERVAL_MS));
+}
 
 static int rpmsg_eptdev_destroy(struct device *dev, void *data)
 {
@@ -513,6 +525,10 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
 	}
 
 	dev_set_drvdata(&rpdev->dev, ctrldev);
+
+	/* Start heartbeat timer */
+	setup_timer(&timer_hb, timer_hb_cb, 0);
+	mod_timer(&timer_hb, jiffies + msecs_to_jiffies(HB_INTERVAL_MS));
 
 	return ret;
 
