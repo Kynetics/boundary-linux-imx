@@ -116,10 +116,6 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
 	if (!skb)
 		return -ENOMEM;
 
-	skb = alloc_skb(len, GFP_ATOMIC);
-	if (!skb)
-		return -ENOMEM;
-
 	void *tmp = __skb_put(skb, len);
 	memcpy(tmp, buf, len);
 
