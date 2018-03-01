@@ -190,6 +190,11 @@ int imx_mu_rpmsg_unregister_nb(const char *name, struct notifier_block *nb)
 	return 0;
 }
 
+void imx_mu_trigger_gpi(uint32_t index)
+{
+	MU_TriggerGeneralInt(mu_base, index);
+}
+
 static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
 				    unsigned int index,
 				    void (*callback)(struct virtqueue *vq),
@@ -514,6 +519,9 @@ static int imx_rpmsg_probe(struct platform_device *pdev)
 		}
 	}
 
+	MU_EnableGeneralInt(mu_base, 0);
+	MU_EnableGeneralInt(mu_base, 1);
+	MU_EnableGeneralInt(mu_base, 2);
 	return ret;
 }
 

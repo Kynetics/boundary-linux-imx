@@ -43,4 +43,6 @@ struct imx_rpmsg_head {
 
 int imx_mu_rpmsg_register_nb(const char *name, struct notifier_block *nb);
 int imx_mu_rpmsg_unregister_nb(const char *name, struct notifier_block *nb);
+void imx_mu_trigger_gpi(uint32_t index);
+
 #endif /* __LINUX_IMX_RPMSG_H__ */
