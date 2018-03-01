@@ -351,26 +351,8 @@ static int set_vring_phy_buf(struct platform_device *pdev,
 	unsigned int start, end;
 	int i, ret = 0;
 
-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-	if (res) {
-		size = resource_size(res);
-		start = res->start;
-		end = res->start + size;
-		for (i = 0; i < vdev_nums; i++) {
-			rpdev->ivdev[i].vring[0] = start;
-			rpdev->ivdev[i].vring[1] = start +
-						   0x8000;
-			start += 0x10000;
-			if (start > end) {
-				pr_err("Too small memory size %x!\n",
-						(u32)size);
-				ret = -EINVAL;
-				break;
-			}
-		}
-	} else {
-		return -ENOMEM;
-	}
+	rpdev->ivdev[0].vring[0] = 0xBFFF0000;
+	rpdev->ivdev[0].vring[1] = 0xBFFF8000;
 
 	return ret;
 }
