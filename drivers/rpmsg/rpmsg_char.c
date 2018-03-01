@@ -49,7 +49,7 @@ static DEFINE_IDA(rpmsg_minor_ida);
 #define dev_to_ctrldev(dev) container_of(dev, struct rpmsg_ctrldev, dev)
 #define cdev_to_ctrldev(i_cdev) container_of(i_cdev, struct rpmsg_ctrldev, cdev)
 
-#define HB_INTERVAL_MS		1000
+#define HB_INTERVAL_MS		10
 static struct timer_list timer_hb;
 
 /**
