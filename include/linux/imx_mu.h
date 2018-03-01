@@ -32,6 +32,7 @@
 #define MU_SR_RF0_MASK1		(1 << 27)
 #define MU_CR_RIE0_MASK1	(1 << 27)
 #define MU_CR_GIE0_MASK1	(1 << 31)
+#define MU_CR_GIR0_MASK1	(1 << 19)
 
 #define MU_TR_COUNT			4
 #define MU_RR_COUNT			4
@@ -41,6 +42,7 @@ void MU_Init(void __iomem *base);
 void MU_SendMessage(void __iomem *base, uint32_t regIndex, uint32_t msg);
 void MU_ReceiveMsg(void __iomem *base, uint32_t regIndex, uint32_t *msg);
 void MU_EnableGeneralInt(void __iomem *base, uint32_t index);
+void MU_TriggerGeneralInt(void __iomem *base, uint32_t index);
 void MU_EnableRxFullInt(void __iomem *base, uint32_t index);
 uint32_t MU_ReadStatus(void __iomem *base);
 int32_t MU_SetFn(void __iomem *base, uint32_t Fn);

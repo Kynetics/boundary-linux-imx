@@ -79,6 +79,24 @@ void MU_EnableGeneralInt(void __iomem *base, uint32_t index)
 	writel_relaxed(reg, base + offset);
 }
 
+/*!
+ * This function triggers specific general purpose interrupt on the CM4 core.
+ */
+void MU_TriggerGeneralInt(void __iomem *base, uint32_t index)
+{
+	uint32_t reg, offset;
+
+	offset = unlikely((readl_relaxed(base) >> 16) == MU_VER_ID_V10)
+			  ? MU_V10_ACR_OFFSET1 : MU_ACR_OFFSET1;
+
+	reg = readl_relaxed(base + offset);
+	reg &= ~(MU_CR_GIRn_MASK1 | MU_CR_NMI_MASK1);
+	reg |= MU_CR_GIR0_MASK1 >> index;
+
+	writel_relaxed(reg, base + offset);
+}
+
+
 /*
  * Wait and send message to the other core.
  */
