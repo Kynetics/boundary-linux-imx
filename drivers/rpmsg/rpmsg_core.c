@@ -235,6 +235,26 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
 }
 EXPORT_SYMBOL(rpmsg_trysend_offchannel);
 
+/**
+ * rpmsg_poll() - poll the endpoint's send buffers
+ * @ept:	the rpmsg endpoint
+ * @filp:	file for poll_wait()
+ * @wait:	poll_table for poll_wait()
+ *
+ * Returns mask representing the current state of the endpoint's send buffers
+ */
+unsigned int rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+			poll_table *wait)
+{
+	if (WARN_ON(!ept))
+		return 0;
+	if (!ept->ops->poll)
+		return 0;
+
+	return ept->ops->poll(ept, filp, wait);
+}
+EXPORT_SYMBOL(rpmsg_poll);
+
 /*
  * match an rpmsg channel with a channel info struct.
  * this is used to make sure we're not creating rpmsg devices for channels
