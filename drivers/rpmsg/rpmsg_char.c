@@ -185,6 +185,9 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
 
 	put_device(dev);
 
+	/* Signal remote core that we're removing ept */
+	imx_mu_trigger_gpi(2);
+
 	return 0;
 }
 
@@ -406,6 +409,9 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
 		dev_err(dev, "device_add failed: %d\n", ret);
 		put_device(dev);
 	}
+
+	/* Signal remote core that we're ready to receive */
+	imx_mu_trigger_gpi(1);
 
 	return ret;
 
